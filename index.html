@@ -1,1 +1,153 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>कमेंट और एनोटेशन टूल</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            color: #fff;
+            text-align: center;
+            min-height: 100vh;
+        }
+        h1 {
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        h2 {
+            font-size: 1.8em;
+            margin: 20px 0;
+        }
+        #commentBox {
+            width: 80%;
+            max-width: 600px;
+            height: 120px;
+            margin: 10px auto;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            font-size: 1em;
+        }
+        #commentList {
+            width: 80%;
+            max-width: 600px;
+            margin: 20px auto;
+            text-align: left;
+        }
+        .comment {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            color: #333;
+        }
+        canvas {
+            border: 3px solid #fff;
+            border-radius: 10px;
+            background: #fff;
+            margin: 20px auto;
+            display: block;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        button {
+            padding: 12px 25px;
+            margin: 10px;
+            border: none;
+            border-radius: 25px;
+            background: #ff6f61;
+            color: #fff;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s;
+        }
+        button:hover {
+            background: #ff3d2e;
+            transform: scale(1.05);
+        }
+        @media (max-width: 600px) {
+            h1 { font-size: 2em; }
+            h2 { font-size: 1.5em; }
+            #commentBox, #commentList, canvas {
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>कमेंट और एनोटेशन टूल</h1>
 
+    <!-- कमेंट बॉक्स -->
+    <h2>कमेंट जोड़ें</h2>
+    <textarea id="commentBox" placeholder="अपना कमेंट यहाँ लिखें..."></textarea>
+    <button onclick="addComment()">कमेंट जोड़ें</button>
+    <div id="commentList"></div>
+
+    <!-- एनोटेशन टूल -->
+    <h2>एनोटेशन टूल</h2>
+    <canvas id="canvas" width="500" height="300"></canvas>
+    <button onclick="clearCanvas()">कैनवास साफ करें</button>
+
+    <script>
+        // कमेंट बॉक्स कार्यक्षमता
+        function addComment() {
+            const commentBox = document.getElementById('commentBox');
+            const commentList = document.getElementById('commentList');
+            const commentText = commentBox.value.trim();
+
+            if (commentText) {
+                const commentDiv = document.createElement('div');
+                commentDiv.textContent = commentText;
+                commentDiv.className = 'comment';
+                commentList.appendChild(commentDiv);
+                commentBox.value = ''; // टेक्स्ट बॉक्स साफ करें
+            } else {
+                alert('कृपया एक कमेंट लिखें!');
+            }
+        }
+
+        // एनोटेशन टूल कार्यक्षमता
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        let isDrawing = false;
+
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseout', stopDrawing);
+
+        function startDrawing(e) {
+            isDrawing = true;
+            draw(e);
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+
+            ctx.lineWidth = 2;
+            ctx.lineCap = 'round';
+            ctx.strokeStyle = '#333';
+
+            ctx.lineTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
+        }
+
+        function stopDrawing() {
+            isDrawing = false;
+            ctx.beginPath();
+        }
+
+        function clearCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+    </script>
+</body>
+</html>
